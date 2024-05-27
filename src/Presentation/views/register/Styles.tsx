@@ -13,7 +13,7 @@ const RegisterStyles = StyleSheet.create({
     },
     form: {
         width: '100%',
-        height: '70%',
+        height: '72%',
         backgroundColor: 'white',
         position: 'absolute',
         bottom: 0,
@@ -56,7 +56,7 @@ const RegisterStyles = StyleSheet.create({
     logoContainer: {
         position: 'absolute',
         alignSelf: 'center',
-        top: '5%',
+        top: '4%',
         alignItems: 'center'
     },
     logoImage: {
@@ -66,7 +66,7 @@ const RegisterStyles = StyleSheet.create({
     logoText: {
         color: 'white',
         textAlign: 'center',
-        fontSize: 20,
+        fontSize: 18,
         marginTop: 10,
         fontWeight: 'bold'
     },
