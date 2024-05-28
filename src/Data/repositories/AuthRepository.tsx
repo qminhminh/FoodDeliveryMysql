@@ -22,20 +22,42 @@ export class AuthRepositoryImpl implements AuthRepository {
         }
     }
 
-    async registerWithImage(user: User, file: ImagePicker.ImageInfo): Promise<ResponseApiDelivery> {
+    async registerWithImage(user: User, file: ImagePicker.ImagePickerAsset | null): Promise<ResponseApiDelivery> {
         try {
             let data = new FormData();
-            data.append('image', file.uri); // Pass the file.uri directly as the value
+            
+            if (file?.uri) {
+                // Create a new file object from the uri
+                const localUri = file.uri;
+                const filename = localUri.split('/').pop();
+                const match = /\.(\w+)$/.exec(filename!);
+                const type = match ? `image/${match[1]}` : `image`;
+    
+                data.append('image', {
+                    uri: localUri,
+                    type: type,
+                    name: filename,
+                } as any); // Cast to 'any' to bypass TypeScript issues
+            }
+    
             data.append('user', JSON.stringify(user));
-            const response = await ApiDeliveryForImage.post<ResponseApiDelivery>('/users/createWithImage', data);
+    
+            const response = await ApiDeliveryForImage.post<ResponseApiDelivery>('/users/createWithImage', data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+    
             return Promise.resolve(response.data);
         } catch (error) {
-            let e = (error as AxiosError);
+            let e = error as AxiosError;
             console.log('ERROR: ' + JSON.stringify(e.response?.data));
-            const apiError:ResponseApiDelivery = JSON.parse(JSON.stringify(e.response?.data)); 
-            return Promise.resolve(apiError)
+            const apiError: ResponseApiDelivery = JSON.parse(JSON.stringify(e.response?.data));
+            return Promise.resolve(apiError);
         }
     }
+    
+    
     
     async login(email: string, password: string): Promise<ResponseApiDelivery> {
         try {
